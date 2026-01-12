@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada Spec-Driven Development: Spec-Kit vs Kiro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FDFBF7; color: #1F2937; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; height: 350px; max-height: 400px; }
+        .card { transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .nav-btn.active { background-color: #3B82F6; color: white; border-color: #3B82F6; }
+        .hidden-section { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals & Professional Blue -->
+    <!-- Application Structure Plan: 
+         1. Hero Section: Context setting (Vibe-coding context).
+         2. Interactive Comparison Dashboard: The core of the app. Users can toggle between "Overview" (Radar Chart), "Cost Analysis" (Bar Chart), and "Methodology" (Cards). This allows non-linear exploration of the key decision factors.
+         3. The Experiment (PoC): Specific details on the calculator test, linking to repos and showing the prompt.
+         4. The Verdict: Structured conclusion explaining the rationale behind choosing Spec-Kit.
+         Why: This structure prioritizes the comparative analysis which is the heart of the report, while keeping the technical proofs (PoC) accessible but distinct.
+    -->
+    <!-- Visualization & Content Choices:
+         1. Radar Chart: To visualize qualitative attributes (Intuitiveness, Cost Efficiency, Setup Ease, Precision) of both tools. Best for multi-variable comparison.
+         2. Bar Chart: To dramatize the cost disparity (Kiro's token usage vs Copilot's existing license).
+         3. Interactive Cards: For text-heavy comparisons (Pros/Cons), allowing users to focus on one aspect at a time.
+         4. Process Flow (HTML/CSS): To show the "Prompt -> Spec -> Code" workflow difference.
+         NO SVG/Mermaid used. All visuals via Chart.js or Tailwind styled HTML.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation / Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl font-bold text-gray-800">🚀 Spec-Driven Dev</span>
+                <span class="hidden sm:inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold tracking-wide">RELATÓRIO TÉCNICO</span>
+            </div>
+            <nav class="flex space-x-4">
+                <button onclick="scrollToSection('hero')" class="text-sm font-medium text-gray-500 hover:text-blue-600 transition">Início</button>
+                <button onclick="scrollToSection('comparison')" class="text-sm font-medium text-gray-500 hover:text-blue-600 transition">Comparativo</button>
+                <button onclick="scrollToSection('poc')" class="text-sm font-medium text-gray-500 hover:text-blue-600 transition">PoC</button>
+                <button onclick="scrollToSection('verdict')" class="text-sm font-medium text-gray-500 hover:text-blue-600 transition">Conclusão</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 text-center">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">
+                A Jornada para o <span class="text-blue-600">Vibe-Coding</span>
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
+                Uma análise comparativa entre <strong>Spec-Kit</strong> e <strong>Kiro</strong> para implementação de Spec-Driven Development em times de tecnologia.
+            </p>
+            <div class="mt-8 flex justify-center gap-4">
+                <button onclick="scrollToSection('comparison')" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
+                    Ver Comparação
+                </button>
+                <a href="#poc" class="px-6 py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg shadow-sm hover:bg-gray-50 transition">
+                    Ver Prova de Conceito
+                </a>
+            </div>
+        </section>
+
+        <!-- Context Cards -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">📌 O Cenário</h3>
+                    <p class="text-gray-600">
+                        O time está migrando para um fluxo de trabalho "vibe-coding", onde a IA assume o papel principal na codificação. Para garantir qualidade e controle, adotamos o paradigma <strong>Spec-Driven Development</strong> (Desenvolvimento Orientado a Especificação).
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">🎯 O Objetivo</h3>
+                    <p class="text-gray-600">
+                        Validar qual ferramenta oferece o melhor equilíbrio entre <strong>assertividade</strong>, <strong>custo</strong> e <strong>manutenibilidade</strong> para iniciar novos projetos.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Section (Dashboard) -->
+        <section id="comparison" class="bg-white border-y border-gray-200 py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-900">O Duelo das Ferramentas</h2>
+                    <p class="mt-2 text-gray-500">Explore as dimensões da nossa análise interativa.</p>
+                </div>
+
+                <!-- Dashboard Controls -->
+                <div class="flex justify-center space-x-2 mb-8 bg-gray-100 p-1 rounded-lg w-fit mx-auto">
+                    <button onclick="switchTab('overview')" id="btn-overview" class="nav-btn active px-4 py-2 rounded-md text-sm font-medium transition">Visão Geral</button>
+                    <button onclick="switchTab('cost')" id="btn-cost" class="nav-btn px-4 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 transition">Análise de Custo</button>
+                    <button onclick="switchTab('methodology')" id="btn-methodology" class="nav-btn px-4 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 transition">Metodologia</button>
+                </div>
+
+                <!-- Tab: Overview (Radar Chart) -->
+                <div id="tab-overview" class="fade-in grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6">
+                        <h3 class="text-2xl font-bold text-gray-800">Qualitativo vs Quantitativo</h3>
+                        <p class="text-gray-600">
+                            Nossa análise revelou uma troca fundamental: o <strong>Kiro</strong> brilha na intuição e velocidade inicial, enquanto o <strong>Spec-Kit</strong> exige mais esforço inicial, mas paga dividendos em documentação e custo a longo prazo.
+                        </p>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-green-100 text-green-600 font-bold text-xs mt-0.5">1</span>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900">Kiro: A Ferrari</p>
+                                    <p class="text-sm text-gray-500">Rápido, direto, intuitivo. Mas o "combustível" (tokens) é caro.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold text-xs mt-0.5">2</span>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900">Spec-Kit: O Tanque</p>
+                                    <p class="text-sm text-gray-500">Robusto, usa recursos já disponíveis (GitHub Copilot), força disciplina.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-6 shadow-inner">
+                        <div class="chart-container">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-gray-400 mt-4">Comparação baseada em experiência de uso em PoC</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Cost (Bar Chart) -->
+                <div id="tab-cost" class="hidden-section fade-in">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                            <div class="chart-container">
+                                <canvas id="costChart"></canvas>
+                            </div>
+                            <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                                <p class="text-sm text-yellow-800">
+                                    <strong>Alerta de Consumo:</strong> A calculadora simples consumiu ~44.77 tokens no Kiro. O plano gratuito oferece apenas 50 tokens/mês. Escalar um projeto completo seria inviável financeiramente sem um orçamento substancial.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <h3 class="text-2xl font-bold text-gray-800">O Dilema Financeiro</h3>
+                            <p class="text-gray-600">
+                                Enquanto o Kiro é uma ferramenta proprietária da AWS com modelo de cobrança por uso, o Spec-Kit se integra ao ecossistema GitHub.
+                            </p>
+                            <div class="space-y-4">
+                                <div class="p-4 rounded-lg bg-blue-50 border border-blue-100">
+                                    <h4 class="font-bold text-blue-900">Spec-Kit (GitHub)</h4>
+                                    <p class="text-sm text-blue-700 mt-1">Custo marginal zero para times que já possuem licença do Copilot. Open Source.</p>
+                                </div>
+                                <div class="p-4 rounded-lg bg-red-50 border border-red-100">
+                                    <h4 class="font-bold text-red-900">Kiro (AWS)</h4>
+                                    <p class="text-sm text-red-700 mt-1">Modelo proprietário. Custo de tokens escala linearmente com a complexidade do projeto. A PoC consumiu 90% da cota mensal gratuita.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Methodology (Cards) -->
+                <div id="tab-methodology" class="hidden-section fade-in">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Kiro Card -->
+                        <div class="card bg-white rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500 opacity-5 rounded-bl-full -mr-10 -mt-10"></div>
+                            <h3 class="text-xl font-bold text-purple-700 mb-4">Kiro</h3>
+                            <div class="space-y-2">
+                                <span class="inline-block px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-md">Intuitivo</span>
+                                <span class="inline-block px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-md">Assertivo</span>
+                            </div>
+                            <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                                <li class="flex items-start">✅ Interface direta e menos verbosa.</li>
+                                <li class="flex items-start">✅ Gera código funcional rapidamente.</li>
+                                <li class="flex items-start">❌ Custo elevado para projetos completos.</li>
+                                <li class="flex items-start">❌ Lock-in proprietário.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Spec-Kit Card -->
+                        <div class="card bg-white rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-green-500 opacity-5 rounded-bl-full -mr-10 -mt-10"></div>
+                            <h3 class="text-xl font-bold text-green-700 mb-4">Spec-Kit</h3>
+                            <div class="space-y-2">
+                                <span class="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-md">Custo-Benefício</span>
+                                <span class="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-md">Educativo</span>
+                            </div>
+                            <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                                <li class="flex items-start">✅ Usa licença existente do Copilot.</li>
+                                <li class="flex items-start">✅ Força documentação precisa (Spec-Driven).</li>
+                                <li class="flex items-start">❌ Setup mais verboso e manual.</li>
+                                <li class="flex items-start">❌ Curva de aprendizado inicial maior.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PoC Section -->
+        <section id="poc" class="bg-gray-50 py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Prova de Conceito: A Calculadora</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl">
+                        Para validar as ferramentas, criamos uma calculadora simples com o mesmo prompt em ambas. O objetivo era testar a capacidade de geração de código Vanilla JS/HTML/CSS.
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Prompt Box -->
+                    <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-fit">
+                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">O Prompt Utilizado</h4>
+                        <div class="bg-gray-800 text-gray-200 p-4 rounded-md font-mono text-sm leading-relaxed">
+                            "This project is a simple site that implements a calculator. It will use only vanila HTML, CSS and Javascript."
+                        </div>
+                    </div>
+
+                    <!-- Results Comparison -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500 hover:shadow-md transition">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-gray-900">Repositório Spec-Kit</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Geração mais verbosa, exigiu etapas extras de especificação, resultando em documentação mais rica.</p>
+                                </div>
+                                <a href="https://github.com/BrunoSouzaPicinini/calculator-spec-kit" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm font-semibold flex items-center">
+                                    Ver Código <span class="ml-1">→</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-purple-500 hover:shadow-md transition">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-gray-900">Repositório Kiro</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Geração quase instantânea e assertiva. Custo: ~44.77 tokens (90% do plano free).</p>
+                                </div>
+                                <a href="https://github.com/BrunoSouzaPicinini/calculator-kiro" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm font-semibold flex items-center">
+                                    Ver Código <span class="ml-1">→</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verdict Section -->
+        <section id="verdict" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+            <div class="bg-blue-50 p-8 sm:p-12 rounded-3xl border border-blue-100">
+                <h2 class="text-3xl font-extrabold text-blue-900 mb-6">O Veredito Final</h2>
+                <p class="text-lg text-blue-800 mb-8 leading-relaxed">
+                    Apesar da intuição superior do Kiro, optamos pelo <strong>Spec-Kit</strong>.
+                </p>
+                <div class="text-left bg-white p-6 rounded-xl shadow-sm space-y-4">
+                    <p class="text-gray-700">
+                        <strong class="text-blue-600">1. Sustentabilidade Financeira:</strong> Utilizar a licença existente do Copilot viabiliza o desenvolvimento de projetos inteiros sem microtransações por token.
+                    </p>
+                    <p class="text-gray-700">
+                        <strong class="text-blue-600">2. Cultura de Documentação:</strong> A "desvantagem" da verbosidade do Spec-Kit tornou-se um trunfo. Ele nos força a documentar o software com precisão antes de codificar, alinhando-se perfeitamente com os princípios do Spec-Driven Development.
+                    </p>
+                    <p class="text-gray-700">
+                        <strong class="text-blue-600">3. Independência:</strong> Reduzimos o risco de lock-in em uma ferramenta proprietária específica, mantendo o controle sobre nosso fluxo de desenvolvimento.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <span class="text-xl font-bold text-white">Spec-Driven Dev</span>
+                <p class="text-sm text-gray-400 mt-1">Documentação de Processo & Decisão</p>
+            </div>
+            <div class="text-sm text-gray-500">
+                &copy; 2024 Time de Tecnologia. Baseado em PoC Real.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            currentTab: 'overview'
+        };
+
+        // --- Data ---
+        // Radar Chart Data (Qualitative Comparison)
+        const radarData = {
+            labels: ['Custo-Benefício', 'Facilidade de Uso', 'Documentação Forçada', 'Assertividade Inicial', 'Independência'],
+            datasets: [{
+                label: 'Spec-Kit',
+                data: [9, 5, 9, 6, 8],
+                fill: true,
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                borderColor: 'rgb(59, 130, 246)',
+                pointBackgroundColor: 'rgb(59, 130, 246)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(59, 130, 246)'
+            }, {
+                label: 'Kiro',
+                data: [3, 9, 4, 9, 4],
+                fill: true,
+                backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                borderColor: 'rgb(168, 85, 247)',
+                pointBackgroundColor: 'rgb(168, 85, 247)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(168, 85, 247)'
+            }]
+        };
+
+        // Bar Chart Data (Cost Comparison)
+        const costData = {
+            labels: ['PoC Calculadora', 'Projeto Médio (Est.)', 'Projeto Grande (Est.)'],
+            datasets: [
+                {
+                    label: 'Custo Kiro (Tokens Estimados)',
+                    data: [45, 4500, 25000],
+                    backgroundColor: 'rgba(168, 85, 247, 0.7)',
+                    borderColor: 'rgb(168, 85, 247)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Custo Spec-Kit (Licença Copilot)',
+                    data: [0, 0, 0], // Flat rate represented as baseline relative to project scaling
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                    borderColor: 'rgb(59, 130, 246)',
+                    borderWidth: 1
+                }
+            ]
+        };
+
+        // --- Chart Initialization ---
+        let radarChartInstance = null;
+        let costChartInstance = null;
+
+        function initCharts() {
+            // Radar Chart
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            radarChartInstance = new Chart(ctxRadar, {
+                type: 'radar',
+                data: radarData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: { line: { borderWidth: 3 } },
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: { display: false } // Hide numbers for cleaner look
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Cost Chart
+            const ctxCost = document.getElementById('costChart').getContext('2d');
+            costChartInstance = new Chart(ctxCost, {
+                type: 'bar',
+                data: costData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Consumo de Tokens / Custo' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if(context.dataset.label.includes('Spec-Kit')) {
+                                        return 'Spec-Kit: Custo Fixo (Já Pago)';
+                                    }
+                                    return context.dataset.label + ': ' + context.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Interaction Handling ---
+        function switchTab(tabId) {
+            // Update State
+            state.currentTab = tabId;
+
+            // Hide all tabs
+            document.querySelectorAll('#comparison > div > div[id^="tab-"]').forEach(el => {
+                el.classList.add('hidden-section');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(`tab-${tabId}`);
+            selectedTab.classList.remove('hidden-section');
+            
+            // Update Buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-600', 'text-white');
+                btn.classList.add('text-gray-600');
+            });
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            activeBtn.classList.add('active', 'bg-blue-600', 'text-white');
+            activeBtn.classList.remove('text-gray-600');
+
+            // Trigger chart update/resize if needed when tab becomes visible
+            if(tabId === 'cost' && costChartInstance) {
+                costChartInstance.resize();
+            }
+            if(tabId === 'overview' && radarChartInstance) {
+                radarChartInstance.resize();
+            }
+        }
+
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            // Default tab is already set in HTML structure, visuals initialized above
+        });
+
+    </script>
+</body>
+</html>
